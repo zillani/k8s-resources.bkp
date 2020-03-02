@@ -8,7 +8,7 @@
 
 ## Simple app
 
-```bash
+```
 apt-get install python
 docker build -t simpleapp
 find / -name date.out
@@ -17,7 +17,7 @@ find / -name date.out
 ## Build local docker registry
 
 #### docker-compose and registry
-```bash
+```
 apt-get install docker-compose apache2-utils
 mkdir -p /localdocker/data
 cd /localdocker/
@@ -27,7 +27,7 @@ curl http://localhost:5000/v2/ #don't forget / in the end
 
 
 #### kompose
-```bash
+```
 curl -L https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64 -o kompose
 chmod +x kompose
 mv kompose /usr/local/bin
