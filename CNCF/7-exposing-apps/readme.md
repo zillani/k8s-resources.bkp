@@ -61,5 +61,6 @@ Now edit the ingress rule, update the host to thirdpage.org
 ```bash
 kubectl edit ingress ingress-test
 curl -H "Host: thirdpage.org" http://10.128.0.7/
+```
 
 
