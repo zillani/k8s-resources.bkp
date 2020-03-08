@@ -9,5 +9,5 @@ spec:
       - name: resting
         image: busybox
         command: ["/bin/sleep"]
-        args: ["3"]
+        args: ["5"]
       restartPolicy: Never

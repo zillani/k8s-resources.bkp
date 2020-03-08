@@ -26,10 +26,9 @@ sudo sh -c "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-
 
 sudo apt-get update
 
-sudo apt-get install -y kubeadm=1.15.1-00 kubelet=1.15.1-00 kubectl=1.15.1-00
+sudo apt-get install -y kubeadm=1.16.0-00 kubelet=1.16.0-00 kubectl=1.16.0-00
 
 echo
 echo "  Script finished. You now need the kubeadm join command"
 echo "  from the output on the master node"
-echo 
 
