@@ -82,21 +82,24 @@ kubeadm reset
 
 ## Upgrade
 
+Conditions
+
+- swap must be off `sudo swapoff -a`
+- CANNOT SKIP MINOR VERSIONS
+  you can upgrade from 1.15.x to 1.16.x, but not from 1.15.x to 1.17.x
+
 ### Upgrade master node
-Sometimes a direct bumb from one version to other doesn't work like,
-Upgrade should be done from 1.14 to 1.15 only, 
-but not directly from 1.14 to 1.16 or 1.17
 
 Find the version available, 
 ```bash
 apt update
-apt-cache policy kubeadm
+apt-cache madison kubeadm
 ```
 
 install the version desired,
 ```bash
 apt-mark unhold kubeadm && \
-apt-get update && apt-get install -y kubeadm=1.16.6-00 && \
+apt-get update && apt-get install -y kubeadm=1.16.6-00 --allow-downgrades && \
 apt-mark hold kubeadm
 ```
 
@@ -112,20 +115,58 @@ kubectl drain ubuntu1 --ignore-daemonsets
 kubectl drain ubuntu2 --ignore-daemonsets
 kubectl drain ubuntu3 --ignore-daemonsets
 sudo kubeadm upgrade plan
-sudo kubeadm upgrade apply v1.16.6
+sudo kubeadm upgrade apply v1.16.6 --force
+```
+
+update kubectl & kubelet
+```bash
+apt-mark unhold kubelet kubectl && \
+apt-get update && apt-get install -y kubelet=1.16.6-00 kubectl=1.16.6-00 && \
+apt-mark hold kubelet kubectl
+```
+
+restart kubelet
+```bash
+sudo systemctl restart kubelet
+```
+
+uncordon the node, 
+```bash
+kubectl uncordon ubuntu1
 ```
 
 ### Upgrade worker node
 
-update kubeadm
+upgrade kubeadm
 ```bash
 apt-mark unhold kubeadm && \
-apt-get update && apt-get install -y kubeadm=1.16.6-00 && \
+apt-get update && apt-get install -y kubeadm=1.16.6-00 --allow-downgrades && \
 apt-mark hold kubeadm
 ```
-drain node,
+drain node, (from master node)
 ```bash
 kubectl drain ubuntu2 --ignore-daemonsets
+```
+upgrade node
+```bash
+sudo kubeadm upgrade node
+```
+
+update kubectl & kubelet
+```bash
+apt-mark unhold kubelet kubectl && \
+apt-get update && apt-get install -y kubelet=1.16.6-00 kubectl=1.16.6-00 && \
+apt-mark hold kubelet kubectl
+```
+
+restart kubelet
+```bash
+sudo systemctl restart kubelet
+```
+
+uncordon the node, 
+```bash
+kubectl uncordon ubuntu2
 ```
 
 ### Errors
@@ -136,15 +177,10 @@ sudo kubeadm upgrade apply v1.16.6 --ignore-preflight-errors all
 
 Error while draining, 
 Reset the config file & try again.
+
 ```bash
 rm ~/.kube/config
 cat /etc/kubernetes/admin.conf > ~/.kube/config
-```
-
-Error trying to upgrade etcd cluster,
-```bash
-install latest kubeadm and
-upgrade using it. 
 ```
 
 note: if something goes wrong, you can uncordon the master node, 
