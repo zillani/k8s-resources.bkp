@@ -5,7 +5,11 @@
    1. [Ingress](#Ingress)
    2. [Calico](#Calico)
    3. [CNI](#CNI)
-2. [Installation](#Installation)
+3. [Installation](#Installation)
+4. [Uninstall](#Uninstall)
+5. [Upgrade](#Upgrade)
+6. [Downgrade](#Downgrade)
+
 
 ## Architecture
 
@@ -65,5 +69,52 @@ _note_: If you are accessing the cluster after restarting the nodes, please turn
 `sudo swapoff -a`
 
 
+## Uninstall k8s
 
+Perform the below commands on master & worker node,
+```bash
+rm -rf ~/.kube
+kubeadm reset
+```
+
+## Upgrade
+Upgrade should be done from 1.14 to 1.15 only, 
+but not directly from 1.14 to 1.16 or 1.17
+
+Find the version available, 
+```bash
+apt update
+apt-cache policy kubeadm
+```
+
+install the version desired,
+```bash
+apt-mark unhold kubeadm && \
+apt-get update && apt-get install -y kubeadm=1.17.2-00 && \
+apt-mark hold kubeadm
+```
+
+verify & drain the nodes, 
+below, `ubuntu1` is the name of master node,
+
+```bash
+kubeadm version
+kubectl drain ubuntu1 --ignore-daemonsets
+sudo kubeadm upgrade plan
+sudo kubeadm upgrade apply v1.17.2-00
+```
+
+note: if something goes wrong, you can uncordon the master node, 
+```bash
+kubectl uncordon ubuntu1
+```
+
+## Downgrade
+
+```bash
+rm -rf /usr/bin/kubeadm
+apt-get update
+apt-get install
+sudo apt-get install -y kubeadm=1.15.9-00 kubelet=1.15.9-00 kubectl=1.15.9-00 --allow-downgrades
+```
 

@@ -1,5 +1,5 @@
 #!/bin/bash -x
-echo "This script is written to work with Ubuntu 16.04"
+echo "This script is written to work with Ubuntu 18.04"
 sleep 3
 echo
 echo "Disable swap until next reboot"
@@ -23,7 +23,7 @@ sudo sh -c "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-
 
 sudo apt-get update
 
-sudo apt-get install -y kubeadm=1.16.0-00 kubelet=1.16.0-00 kubectl=1.16.0-00
+sudo apt-get install -y kubeadm=1.17.3-00 kubelet=1.17.3-00 kubectl=1.17.3-00
 
 echo
 echo "Installed - now to get Calico Project network plugin"
