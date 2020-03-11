@@ -164,7 +164,7 @@ restart kubelet
 sudo systemctl restart kubelet
 ```
 
-uncordon the node, 
+uncordon the node, (from master/w-node)
 ```bash
 kubectl uncordon ubuntu2
 ```
