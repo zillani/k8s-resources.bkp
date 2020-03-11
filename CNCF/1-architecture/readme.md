@@ -8,6 +8,9 @@
 3. [Installation](#Installation)
 4. [Uninstall](#Uninstall)
 5. [Upgrade](#Upgrade)
+   1. [Upgrade master node](#Upgrade-master-node)
+   2. [Upgrade worker node](#Upgrade-worker-node)
+   3. [Errors](#Errors)
 6. [Downgrade](#Downgrade)
 
 
@@ -78,6 +81,9 @@ kubeadm reset
 ```
 
 ## Upgrade
+
+### Upgrade master node
+Sometimes a direct bumb from one version to other doesn't work like,
 Upgrade should be done from 1.14 to 1.15 only, 
 but not directly from 1.14 to 1.16 or 1.17
 
@@ -90,18 +96,55 @@ apt-cache policy kubeadm
 install the version desired,
 ```bash
 apt-mark unhold kubeadm && \
-apt-get update && apt-get install -y kubeadm=1.17.2-00 && \
+apt-get update && apt-get install -y kubeadm=1.16.6-00 && \
 apt-mark hold kubeadm
 ```
 
-verify & drain the nodes, 
+note: you can get `connection-timeout` issue while upgrading,
+just update namerserver and continue.
+
+verify & drain the node, 
 below, `ubuntu1` is the name of master node,
 
 ```bash
 kubeadm version
 kubectl drain ubuntu1 --ignore-daemonsets
+kubectl drain ubuntu2 --ignore-daemonsets
+kubectl drain ubuntu3 --ignore-daemonsets
 sudo kubeadm upgrade plan
-sudo kubeadm upgrade apply v1.17.2-00
+sudo kubeadm upgrade apply v1.16.6
+```
+
+### Upgrade worker node
+
+update kubeadm
+```bash
+apt-mark unhold kubeadm && \
+apt-get update && apt-get install -y kubeadm=1.16.6-00 && \
+apt-mark hold kubeadm
+```
+drain node,
+```bash
+kubectl drain ubuntu2 --ignore-daemonsets
+```
+
+### Errors
+Error with pre-flight checks, ignore them,
+```bash
+sudo kubeadm upgrade apply v1.16.6 --ignore-preflight-errors all
+```
+
+Error while draining, 
+Reset the config file & try again.
+```bash
+rm ~/.kube/config
+cat /etc/kubernetes/admin.conf > ~/.kube/config
+```
+
+Error trying to upgrade etcd cluster,
+```bash
+install latest kubeadm and
+upgrade using it. 
 ```
 
 note: if something goes wrong, you can uncordon the master node, 
@@ -111,10 +154,11 @@ kubectl uncordon ubuntu1
 
 ## Downgrade
 
+Follow same steps as above, with the flags below,
 ```bash
 rm -rf /usr/bin/kubeadm
 apt-get update
 apt-get install
-sudo apt-get install -y kubeadm=1.15.9-00 kubelet=1.15.9-00 kubectl=1.15.9-00 --allow-downgrades
+sudo apt-get install -y kubeadm=1.15.9-00 kubelet=1.15.9-00 kubectl=1.15.9-00 --allow-downgrades --allow-change-held-packages
 ```
 
