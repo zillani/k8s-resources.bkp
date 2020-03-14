@@ -90,22 +90,32 @@ curl -H "Host: thirdpage.org" http://10.128.0.7/
 
 ## Service Mesh
 
-For more complex connections or resources such as service discovery, rate limiting, traffic management and advanced metrics you may want to implement a service mesh.
-
-A service mesh consists of edge and embedded proxies communicating with each other and handing traffic based on rules from a control plane. Various options are available including Envoy, Istio, and linkerd.
-
-__Envoy__
-A modular and extensible proxy favored due to modular construction, open architecture and dedication to remaining unmonitized. Often used as a data plane under other tools of a service mesh.
+A service mesh consists of edge and embedded proxies communicating with each other and handing traffic based on rules from a control plane.
+For more complex connections or resources such as __service discovery__, __rate limiting__, __traffic management__ and __advanced metrics__ you may want to implement a service mesh.
 
 __Istio__
-A powerful tool set which leverages Envoy proxies via a multi-component control plane. Built to be platform independent it can be used to make the service mesh flexible and feature filled. 
+Istio has __control plane__ but doen't have its own data plane.
+It can be configured to use 
+
 
 __Linkerd__
-Another service mesh purpose built to be easy to deploy, fast, and ultralight.
+An easy to deploy, fast, and ultralight service mesh.
+Linkerd has default __linkerd2-proxy__ (aka linkerd-proxy) in it's dataplane
+
+__Envoy__
+Envoy is a proxy, not service mesh. Both linkerd & istio can be configured to use envoy proxy. 
+
 
 __Istio service mesh__
 
-![](https://raw.githubusercontent.com/zillani/img/master/k8s-resources/istio.jpg)
+![](https://raw.githubusercontent.com/zillani/img/master/k8s-resources/istio-arch.jpg)
 
+__Linkerd service mesh__
 
+![](https://raw.githubusercontent.com/zillani/img/master/k8s-resources/linkerd2-arch.jpg)
+
+### Control Plane vs Data Plane
+
+- __The Control Plane__ responsibility is to manage and configure the sidecar proxies to enforce policies and collect telemetry.
+- __The Data Plane__ responsibility is to handle the communication between the services and take care of the functionalities like Service Discovery, Load Balancing, Traffic Management, Health Check, etc
 
