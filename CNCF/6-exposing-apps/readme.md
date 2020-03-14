@@ -93,28 +93,28 @@ curl -H "Host: thirdpage.org" http://10.128.0.7/
 A service mesh consists of edge and embedded proxies communicating with each other and handing traffic based on rules from a control plane.
 For more complex connections or resources such as __service discovery__, __rate limiting__, __traffic management__ and __advanced metrics__ you may want to implement a service mesh.
 
-__Istio__
+#### Istio
 Istio has __control plane__ but doen't have its own data plane.
 It can be configured to use 
 
 
-__Linkerd__
+#### Linkerd
 An easy to deploy, fast, and ultralight service mesh.
 Linkerd has default __linkerd2-proxy__ (aka linkerd-proxy) in it's dataplane
 
-__Envoy__
+#### Envoy
 Envoy is a proxy, not service mesh. Both linkerd & istio can be configured to use envoy proxy. 
 
 
-__Istio service mesh__
+#### Istio service mesh
 
 ![](https://raw.githubusercontent.com/zillani/img/master/k8s-resources/istio-arch.jpg)
 
-__Linkerd service mesh__
+#### Linkerd service mesh
 
 ![](https://raw.githubusercontent.com/zillani/img/master/k8s-resources/linkerd2-arch.jpg)
 
-### Control Plane vs Data Plane
+#### Control Plane vs Data Plane
 
 - __The Control Plane__ responsibility is to manage and configure the sidecar proxies to enforce policies and collect telemetry.
 - __The Data Plane__ responsibility is to handle the communication between the services and take care of the functionalities like Service Discovery, Load Balancing, Traffic Management, Health Check, etc
