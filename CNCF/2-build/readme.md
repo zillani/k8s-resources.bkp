@@ -1,15 +1,18 @@
 # Build
 ## Table of Contents
-1. [Simple app](#simple-app)
-2. [Configure local docker registry](#build-local-docker-registry)
+1. Containers
+   1. [Container Runtime Interface](#Container-Runtime-Interface)
+   2. [CLI tools for Docker](#CLI-tools-for-Docker)
+2. [Simple app](#simple-app)
+3. [Configure local docker registry](#build-local-docker-registry)
 	1. [docker-compose and registry](#docker-compose-and-registry)
-	2. [install kompose](#install-kompose)
-	3. [create volumes](#create-volumes)
-	4. [enable insecure access master node](#enable-insecure-access-master-node)
-	5. [test local docker registry](#test-local-docker-registry)
-	6. [enable insecure access worker node](#enable-insecure-access-worker-node)
-	7. [export deployment](#export-deployment)
-3. [Configure Probes](#Configure-Probes)
+	2. [Install kompose](#Install-kompose)
+	3. [Create volumes](#Create-volumes)
+	4. [Enable insecure access master node](#Enable-insecure-access-master-node)
+	5. [Test local docker registry](#Test-local-docker-registry)
+	6. [Enable insecure access worker node](#Enable-insecure-access-worker-node)
+	7. [Export deployment](#Export-deployment)
+4. [Configure Probes](#Configure-Probes)
 	1. [Add readinessProbes](#Add-readinessProbes)
 	2. [Add livenessProbes](#Add-livenessProbes)
 
@@ -17,9 +20,32 @@
 
 NOTE: Here, 10.110.186.162 is the ipaddress of master node.
 
+
+## Containers
+
+![](https://raw.githubusercontent.com/zillani/img/master/k8s-resources/vm-vs-container.jpg)
+
+### Container Runtime Interface
+
+Container runtime is the component which run the containerized apps, `Docker Engine` remains as default
+for kubernetes.
+
+Below are few alternatives for `docker`
+- [cri-o](https://cri-o.io/)
+- [containerd](https://containerd.io)
+- [rktlet](https://github.com/kubernetes-retired/rktlet)
+- [frakti](https://github.com/kubernetes/frakti)
+
+### CLI tools for Docker
+
+Docker has been standardized as the industry standard, below are some useful tools,
+- [buildah](https://github.com/containers/buildah)
+- [podman](https://podman.io/)
+
+
 ## Simple app
 
-```
+```bash
 apt-get install python
 docker build -t simpleapp
 find / -name date.out
@@ -27,6 +53,7 @@ find / -name date.out
 
 ## Configure local docker registry
 
+Replace `10.110.186.162` with ipAddress of your master node
 
 #### docker-compose and registry
 ```bash
@@ -37,14 +64,14 @@ docker-compose up
 curl http://10.110.186.162:5000/v2/ #don't forget / in the end
 ```
 
-#### install kompose
-```
+#### Cnstall kompose
+```bash
 curl -L https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64 -o kompose
 chmod +x kompose
 mv kompose /usr/local/bin
 ```
 
-#### create volumes
+#### Create volumes
 ```bash
 kubectl create -f vol1.yaml
 kubectl create -f vol2.yaml
@@ -56,7 +83,7 @@ kubectl create -f localregistry.yaml
 curl http://10.110.186.162:5000/v2/ #don't forget / in the end
 ```
 
-#### enable insecure access master node
+#### Enable insecure access master node
 Edit docker configuration to allow insecure access
 ```bash
 sudo vim /etc/docker/daemon.json
@@ -72,7 +99,7 @@ Now, restart docker service,
 sudo systemctl restart docker.service
 ```
 
-#### test local docker registry
+#### Test local docker registry
 
 ```bash
 docker pull ubuntu
@@ -90,7 +117,7 @@ docker tag simpleapp 10.110.186.162:5000/simpleapp
 docker push simpleapp 10.110.186.162:5000/simpleapp
 ```
 
-#### enable insecure access worker node
+#### Enable insecure access worker node
 Here, assuming `10.110.186.162` is the ip address of the master.
 ```bash
  sudo vim /etc/docker/daemon.json
@@ -102,7 +129,7 @@ kubectl scale deployment try1 --replicas=6
 
 ```
 
-#### export deployment
+#### Export deployment
 Now export the deployment to yaml file,
 ```bash
 
