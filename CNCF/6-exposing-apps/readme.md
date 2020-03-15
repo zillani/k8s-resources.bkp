@@ -24,9 +24,12 @@ __Service Diagram__
 
 The __kube-proxy__ running on cluster nodes watches the API server service resources. It presents a type of virtual IP address for services other than __ExternalName__. The mode for this process has changed over versions of Kubernetes. 
 
-In `v1.0`, services ran in userspace mode as `TCP/UDP` over `IP` or Layer 4. 
+In `v1.0`, services ran in userspace mode as `TCP/UDP` over `IP` or Layer 4.
+
 In the `v1.1` release, the iptables proxy was added and became the default mode starting with `v1.2`. 
+
 In the iptables proxy mode, kube-proxy continues to monitor the API server for changes in Service and Endpoint objects, and updates rules for each object when created or removed. One limitation to the new mode is an inability to connect to a Pod should the original request fail, so it uses a Readiness Probe to ensure all containers are functional prior to connection. This mode allows for up to approximately 5000 nodes. Assuming multiple Services and Pods per node, this leads to a bottleneck in the kernel.
+
 Another mode beginning in `v1.9` is __ipvs__. While in beta, and expected to change, it works in the kernel space for greater speed, and allows for a configurable load-balancing algorithm, such as round-robin, shortest expected delay, least connection and several others. This can be helpful for large clusters, much past the previous 5000 node limitation. This mode assumes IPVS kernel modules are installed and running prior to kube-proxy. 
 The kube-proxy mode is configured via a flag sent during initialization, such as __mode=iptables__ and could also be __IPVS__ or __userspace__. 
 
