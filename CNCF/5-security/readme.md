@@ -4,7 +4,8 @@
 2. [Consuming Secrets](#Consuming-Secrets)
 3. [ServiceAccounts](#ServiceAccounts)
 4. [NetworkPolicy](#NetworkPolicy)
-5. [Testing the policy](#Testing-the-policy)
+   1. [Network Policy with ingress and egress](#Network-Policy-with-ingress-and-egress)
+   2. [Network Policy with ipBlock](#Network-Policy-with-ipBlock)
 
 ## SecurityContext
 
@@ -57,11 +58,11 @@ An early architecture decision with Kubernetes was non-isolation, that all pods 
 
 [network-policies](#https://kubernetes.io/docs/concepts/services-networking/network-policies)
 
-### Create Policy
+### Network Policy with ingress and egress
 
 Below app creates a policy that denies all traffic except from ingress/egress
 ```bash
-kubectl apply -f allclosed.yaml
+kubectl create -f allclosed.yaml
 ```
 
 Update `second.yaml` with the below config
@@ -72,8 +73,8 @@ containers:
 - name: busy 
   image: busybox 
 ```
-Observe the pod is failing, now remove the `securityContext` and deploy again, 
-Now add a lable & create the service to expose,
+Observe the pod is failing `kubectl get event` , now remove the `securityContext` , add a label and deploy again, 
+create the service to expose,
 
 ```bash
 metadata: 
@@ -86,7 +87,7 @@ metadata:
 kubectl create service nodeport secondapp --tcp=80
 ```
 
-Using this, edit to add the `selector`
+Using this, edit to add the `selector` and a nodeport 
 
 ```bash
 kubectl get svc secondapp -o yaml
@@ -94,13 +95,22 @@ kubectl get svc secondapp -o yaml
 ```
 
 ```bash
+...
+ports:
+- name: "80"
+  nodePort: 32000
+...
 selector:
   example: second
 ```
 
-Test ingress,
+Now test the service with nodeIp & clusterIP
+
+Test ingress using node-ip & clusterIP with port,
+
 ```bash
 curl <http://node-ip>
+curl <clusterIP>:<nodePort>
 ```
 
 Now test `egress` from container to oustide using `netcat`,
@@ -115,4 +125,74 @@ www.linux.com (151.101.185.5:80) open
 exit
 ```
 
-### Test Policy
+### Network Policy with ipBlock
+
+Let's create a network policy that will allow to access the service
+from private ipv4 16bit address like `192.168..`
+
+- Test from your laptop `curl <nodeIp-public>:<nodePort>`
+- Test from node `curl <nodeIp-private>`
+- Test from container to external web by shelling into it & `netcat`
+
+All of these will timeout,
+
+__Let's Remove Egress and Add eth0__
+
+Add below config to `allclosed.yaml`
+
+```bash
+ spec:
+ podSelector: {} 
+ policyTypes:
+ - Ingress
+ # - Egress
+ 
+```
+
+```bash
+kubectl exec -it -c busy secondapp sh
+nc -vz www.linux.com 80
+www.linux.com (151.101.185.5:80) open
+ip a
+```
+use the `eth0` range and update it as below,
+
+```bash
+policyTypes:
+- Ingress 
+ingress: #<-- Add this and following three lines 
+- from:
+  - ipBlock: 
+      cidr: 192.168.0.0/16
+# - Egress
+```
+
+Check the network policy, 
+```bash
+kubectl get network-policy
+```
+
+```bash
+kubectl replace -f ~/allclosed.yaml
+
+- Ingress 
+ingress:
+- from: 
+  - ipBlock: 
+      cidr: 192.168.0.0/16 
+  ports: #<-- Add this and two following lines
+  - port: 80 
+    protocol: TCP 
+# - Egres
+```
+
+```bash
+kubectl replace -f allclosed.yaml
+```
+
+By adding the ip, you can access the service like, 
+
+```bash
+curl http://192.168.55.91
+```
+
