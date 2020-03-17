@@ -1,6 +1,6 @@
 # Build
 ## Table of Contents
-1. Containers
+1. Containers(#Containers)
    1. [Container Runtime Interface](#Container-Runtime-Interface)
    2. [CLI tools for Docker](#CLI-tools-for-Docker)
 2. [Simple app](#simple-app)
@@ -18,8 +18,7 @@
 
 
 
-NOTE: Here, 10.110.186.162 is the ipaddress of master node.
-
+_Note_: Here, `10.110.186.162` is the ipaddress of master node.
 
 ## Containers
 
@@ -72,6 +71,7 @@ mv kompose /usr/local/bin
 ```
 
 #### Create volumes
+
 ```bash
 kubectl create -f vol1.yaml
 kubectl create -f vol2.yaml
@@ -84,7 +84,9 @@ curl http://10.110.186.162:5000/v2/ #don't forget / in the end
 ```
 
 #### Enable insecure access master node
+
 Edit docker configuration to allow insecure access
+
 ```bash
 sudo vim /etc/docker/daemon.json
 ```
@@ -118,13 +120,16 @@ docker push simpleapp 10.110.186.162:5000/simpleapp
 ```
 
 #### Enable insecure access worker node
+
 Here, assuming `10.110.186.162` is the ip address of the master.
 ```bash
- sudo vim /etc/docker/daemon.json
+sudo vim /etc/docker/daemon.json
+
 { "insecure-registries":["10.110.186.162:5000"}
+
 systemctl restart docker.service
- docker pull 10.110.186.162:5000/simpleapp
- kubectl create deployment try1 --image=10.110.186.162:5000/simpleapp:latest
+docker pull 10.110.186.162:5000/simpleapp
+kubectl create deployment try1 --image=10.110.186.162:5000/simpleapp:latest
 kubectl scale deployment try1 --replicas=6
 
 ```
