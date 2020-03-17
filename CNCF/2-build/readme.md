@@ -64,7 +64,7 @@ docker-compose up
 curl http://10.110.186.162:5000/v2/ #don't forget / in the end
 ```
 
-#### Cnstall kompose
+#### Install kompose
 ```bash
 curl -L https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64 -o kompose
 chmod +x kompose
