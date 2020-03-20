@@ -46,7 +46,7 @@ Docker has been standardized as the industry standard, below are some useful too
 
 ```bash
 apt-get install python
-docker build -t simpleapp
+docker build -t simpleapp .
 find / -name date.out
 ```
 
