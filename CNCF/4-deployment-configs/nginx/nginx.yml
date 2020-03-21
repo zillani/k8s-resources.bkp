@@ -8,6 +8,7 @@ spec:
   containers:
   - name: nginx
     image: nginx:1.11
+    imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 80
     volumeMounts:
@@ -15,6 +16,7 @@ spec:
       mountPath: /etc/nginx/conf.d
   - name: k8s-demo
     image: wardviaene/k8s-demo
+    imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3000
   volumes:
