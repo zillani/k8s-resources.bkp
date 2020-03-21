@@ -15,8 +15,9 @@
    2. [Secrets as volumes](#Secrets-as-volumes)
 3. [Configmap](#Configmap)
    1. [Create configmap](#Create-configmap)
-   2. [Portable configmaps](#Portable-configmaps)
-   3. [Using configmaps](#Using-configmaps)
+   2. [nginx deployment](#nginx deployment)
+   3. [Portable configmaps](#Portable-configmaps)
+   4. [Using configmaps](#Using-configmaps)
 4. [Deployment Configuration Status](#Deployment-Configuration-Status)
 5. [Scaling and Rolling Updates](#Scaling-and-Rolling-Updates)
 6. [Deployment Rollbacks](#Deployment-Rollbacks)
@@ -326,6 +327,14 @@ Create configmap using a literal,
 
 ```bash
 kubectl create cm mysql-pass --from-literal=pass=root123
+```
+### nginx deployment
+
+```bash
+kubectl create cm nginx-config --from-file=configmap/reverse-proxy.conf
+kubectl create -f nginx.yml
+kubectl create -f nginx-service.yml
+```
 ```
 
 ### Portable Configmaps
