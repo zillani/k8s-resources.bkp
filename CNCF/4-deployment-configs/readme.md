@@ -322,6 +322,11 @@ Now, create the config map using the file,
 kubectl create cm colors --from-file=./colors
 kubectl get cm colors -o yaml
 ```
+Create configmap using a literal, 
+
+```bash
+kubectl create cm mysql-pass --from-literal=pass=root123
+```
 
 ### Portable Configmaps
 
