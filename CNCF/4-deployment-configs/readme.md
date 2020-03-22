@@ -10,17 +10,20 @@
       1. [Persistence Volumes](#Persistence-Volumes)
       2. [Persistence Volume Claim](#Persistence-Volume-Claim)
    5. [Dynamic Provisioning](#Dynamic-Provisioning)
+   6. [Example](#Example)
 2. [Secrets](#Secrets)
    1. [Secrets via env variables](#Secrets-via-env-variables)
    2. [Secrets as volumes](#Secrets-as-volumes)
 3. [Configmap](#Configmap)
    1. [Create configmap](#Create-configmap)
-   2. [nginx deployment](#nginx deployment)
+   2. [nginx deployment](#nginx-deployment)
    3. [Portable configmaps](#Portable-configmaps)
    4. [Using configmaps](#Using-configmaps)
+   5. [Example](#Example)
 4. [Deployment Configuration Status](#Deployment-Configuration-Status)
 5. [Scaling and Rolling Updates](#Scaling-and-Rolling-Updates)
 6. [Deployment Rollbacks](#Deployment-Rollbacks)
+   1. [Example](#Example)
 
 
 ## Storage
@@ -129,7 +132,7 @@ kubectl get pv
 kubectl get pvc
 ```
 
-#### Persistence Volume
+#### Persistence Volumes
 
 Consider below yaml file,
 
@@ -226,6 +229,50 @@ provisioner: kubernetes.io/gce-pd
 parameters:
   type: pd-ssd 
 ```
+
+### Example
+
+Here we will configure NFS server, create persistence volume & persistence volume claim
+
+```bash
+bash createNFS.sh
+kubectl create -f pv.yaml
+```
+
+Add the __PV__ inside your `simpleapp`
+
+```bash
+....
+volumeMounts:
+- name: car-vol
+  mountPath: /etc/cars
+- name: nfs-vol #<-- Add this and following line
+  mountPath: /opt
+....
+
+volumes:
+- name: car-vol 
+  configMap: 
+    defaultMode: 420 
+    name: fast-car
+- name: nfs-vol #<-- Add this and following two lines 
+  persistentVolumeClaim:
+    claimName: pvc-one
+dnsPolicy: ClusterFirst
+...
+```
+Now, delete & recreate the deployment,
+
+```bash
+kubectl delete deployment simpleapp
+kubectl create -f simpleapp.yaml
+```
+
+You can check if the volume is mounted to the app,
+```bash
+kubectl describe pod simpleapp
+```
+
 
 ## Secrets
 

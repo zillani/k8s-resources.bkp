@@ -10,6 +10,6 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     path: /opt/sfw
-    server: ckad-1                        #<-- Edit to match master node name or IP
+    server: ubuntu1                        #<-- Edit to match master node name or IP
     readOnly: false
 
