@@ -382,7 +382,7 @@ kubectl create cm nginx-config --from-file=configmap/reverse-proxy.conf
 kubectl create -f nginx.yml
 kubectl create -f nginx-service.yml
 ```
-```
+
 
 ### Portable Configmaps
 
