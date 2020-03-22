@@ -439,21 +439,31 @@ volumes:
 
 With the knowledge of configmaps, volumes, Let's create Ambassdor patterns for logging with FluentD
 
+First, Let's create `persistenceVolume` and `persistenceVolumeClaim`, 
+you can observe that the path __/tmp/weblog__ is created inside your Master/Worker node.
+
 ```bash
 kubectl create -f weblog-pv.yaml
 kubectl create -f weblog-pvc.yaml
-kubectl create -f basic-later.yaml
+```
+
+Now, create our container & fluentD sidecar for logging,
+```bash
+kubectl create -f weblog-configmap.yaml
+kubectl create -f basicpod.yaml
 kubectl exec -c webcont -it basicpod -- /bin/bash
 tailf /var/log/nginx/access.log
 ```
 
+Check the ip-address of the pod and Test it,
+
 ```bash
+kubectl get po basicpod -owide
 curl localhost
 ```
 
-Configure fluentD
+Check the logs,
 ```bash
-kubectl create -f weblog-configmap.yaml
 kubectl logs basicpod fdlogger
 ```
 
