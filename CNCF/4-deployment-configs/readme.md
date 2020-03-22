@@ -19,7 +19,7 @@
    2. [nginx deployment](#nginx-deployment)
    3. [Portable configmaps](#Portable-configmaps)
    4. [Using configmaps](#Using-configmaps)
-   5. [Example](#Example)
+   5. [Logging with FluentD](#Logging-with-FluentD)
 4. [Deployment Configuration Status](#Deployment-Configuration-Status)
 5. [Scaling and Rolling Updates](#Scaling-and-Rolling-Updates)
 6. [Deployment Rollbacks](#Deployment-Rollbacks)
@@ -435,6 +435,28 @@ volumes:
         name: special-config
 ```
 
+### Logging with FluentD
+
+With the knowledge of configmaps, volumes, Let's create Ambassdor patterns for logging with FluentD
+
+```bash
+kubectl create -f weblog-pv.yaml
+kubectl create -f weblog-pvc.yaml
+kubectl create -f basic-later.yaml
+kubectl exec -c webcont -it basicpod -- /bin/bash
+tailf /var/log/nginx/access.log
+```
+
+```bash
+curl localhost
+```
+
+Configure fluentD
+```bash
+kubectl create -f weblog-configmap.yaml
+kubectl logs basicpod fdlogger
+```
+
 ## Deployment Configuration Status
 
 The Status output is generated when the information is requested: ​
@@ -538,3 +560,25 @@ kubectl rollout pause deployment/ghost
 ​kubectl rollout resume deployment/ghost
 ```
 Please note that you can still do a rolling update on ReplicationControllers with the __kubectl rolling-update__ command, but this is done on the client side. Hence, if you close your client, the rolling update will stop.
+
+### Example
+
+Create Second version of simpleapp,
+```bash
+docker build -t simpleapp .
+docker images
+docker tag simpleapp localhost:5000/simpleapp:v2
+docker push localhost:5000/simpleapp:v2
+kubectl get events
+```
+
+Try to rollout the deployment, 
+
+```bash
+kubectl rollout history deployment try1
+kubectl rollout history deployment try1 --revision=1 > 1.out
+kubectl rollout history deployment try1 --revision=2 > 2.out
+diff 1.out 2.out
+kubectl rollout undo --dry-run=true deployment/try1 --revision=1
+kubectl rollout undo deployment/try1 --revision=1
+```
