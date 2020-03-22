@@ -2,8 +2,6 @@
 
 VERSION=$1
 
-upgrade kubeadm
-
 apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=$VERSION --allow-downgrades && apt-mark hold kubeadm
 
 sudo kubeadm upgrade node
