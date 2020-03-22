@@ -12,6 +12,13 @@
    2. [Upgrade worker node](#Upgrade-worker-node)
    3. [Errors](#Errors)
 6. [Downgrade](#Downgrade)
+7. [Taint Master](#Taint-Master)
+8. [Deploy](#Deploy)
+   1. [Basic Pod](#Basic-Pod)
+   2. [Expose Service](#Expose-Service)
+   3. [Multi-Container Pods](#Multi-Container-Pods)
+   4. [Basic Deployment](#Basic-Deployment)
+   5. [Basic Commands](#Basic-Commands)
 
 
 ## Architecture
@@ -203,3 +210,76 @@ apt-get install
 sudo apt-get install -y kubeadm=1.15.9-00 kubelet=1.15.9-00 kubectl=1.15.9-00 --allow-downgrades --allow-change-held-packages
 ```
 
+## Taint Master
+
+Let's first add bash completion for `kubectl` 
+```bash
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+```
+By default the master node will not allow general containers to be deployed for security reasons. This is via a taint. Only containers which tolerate this taint will be scheduled on this node. 
+
+Let's try to remove the taint on master node, 
+
+```bash
+kubectl describe nodes | grep -i Taint
+kubectl taint nodes --all node-role.kubernetes.io/master-node/ubuntu1 untainted
+kubectl describe nodes | grep -i taint
+```
+
+## Deploy
+
+### Basic Pod
+
+```bash
+kubectl create -f basic.yaml
+kubectl get pod -o wide
+curl localhost
+kubectl delete pod basicpod
+```
+
+### Expose Service
+
+```bash
+kubectl delete -f basic.yaml
+kubectl create -f basic-final.yaml
+kubectl create -f basic-service.yaml
+```
+verify the service, 
+
+```bash
+curl <private-ip>
+```
+
+change the service type to `ClusterIp` and redeploy, 
+now you should be able to access it using the nodes' public ip & port
+
+```bash
+curl http://35.238.3.83:31514
+```
+
+### Multi-Container Pods
+
+_Using a single container per pod allows for the most granularity and decoupling. There are still some reasons to deploy multiple containers, sometimes called composite containers, in a single pod. The secondary containers can handle logging or enhance the primary, the sidecar concept, or acting as a proxy to the outside, the ambassador concept, or modifyingdatatomeetanexternalformatsuchasan adapter. Allthreeconceptsaresecondarycontainerstoperform a function the primary container does not_
+
+```bash
+kubectl apply -f basic-later.yaml
+```
+
+### Basic Deployment
+
+```bash
+kubectl create deployment my-nginx --image=nginx
+kubectl describe deployment my-nginx
+kubectl describe pod my-nginx-64bb...
+kubectl get deployment my-nginx -oyaml --export > my-nginx.yaml
+```
+
+### Basic Commands
+
+```bash
+kubectl get pod --all-namespaces
+kubectl get pod -n kube-system
+kubectl get deploy, rs, rc, po, svc, ep
+kubectl delete deployment my-nginx
+```
