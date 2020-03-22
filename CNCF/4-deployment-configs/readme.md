@@ -441,6 +441,7 @@ With the knowledge of configmaps, volumes, Let's create Ambassdor patterns for l
 
 First, Let's create `persistenceVolume` and `persistenceVolumeClaim`, 
 you can observe that the path __/tmp/weblog__ is created inside your Master/Worker node.
+and this location is mapped to __/var/log/nginx__ inside the nginx container (webcont)
 
 ```bash
 kubectl create -f weblog-pv.yaml
@@ -452,14 +453,15 @@ Now, create our container & fluentD sidecar for logging,
 kubectl create -f weblog-configmap.yaml
 kubectl create -f basicpod.yaml
 kubectl exec -c webcont -it basicpod -- /bin/bash
-tailf /var/log/nginx/access.log
+tail -f /var/log/nginx/access.log
 ```
 
-Check the ip-address of the pod and Test it,
+Check the ip-address of the pod (using -owide) &
+Test it,
 
 ```bash
 kubectl get po basicpod -owide
-curl localhost
+curl <pod-ip>
 ```
 
 Check the logs,

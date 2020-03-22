@@ -223,7 +223,12 @@ Let's try to remove the taint on master node,
 
 ```bash
 kubectl describe nodes | grep -i Taint
-kubectl taint nodes --all node-role.kubernetes.io/master-node/ubuntu1 untainted
+```
+copy the taint name and untaint it, 
+Please note that you need to suffix with `-`
+
+```bash
+kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
 kubectl describe nodes | grep -i taint
 ```
 
