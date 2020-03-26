@@ -20,3 +20,7 @@ x509: certificate signed by unknown authority
 rm -rf ~/.kube/config
 cat /etc/kubernetes/admin.conf > ~/.kube/config
 ```
+
+## resolv.cnf gets overridden
+
+![what overrides etc/resolv.conf](https://unix.stackexchange.com/questions/174349/what-overwrites-etc-resolv-conf-on-every-boot)
