@@ -4,6 +4,7 @@
  3. [resolv.cnf gets overridden](#resolv.cnf-gets-overridden)
  4. [ipaddress of master got updated](#ipaddress-of-master-got-updated)
  5. [container stays in creating state](#container-stays-in-creating-state)
+ 6. [unable to access pod via podip](#unable-to-access-pod-via-podip)
 
 ## Upgrade issue
 
@@ -41,3 +42,7 @@ this issue occurred with calico v3.11, so use calico v3.9 instead.
 ```bash
 FailedCreatePodSandBox 16h kubelet, controller-1 Failed create pod sandbox: rpc error: code = Unknown desc = [failed to set up sandbox container "bf09a329e420195005783041fd4be31e2a3ab3a1396e9a5f40ca3b69d5dc6267" network for pod "ceph-pools-audit-1570654500-8g9kd": NetworkPlugin cni failed to set up pod "ceph-pools-audit-1570654500-8g9kd_kube-system" network: Multus: Err adding pod to network "chain": Multus: error in invoke Conflist add - "chain": error in getting result from AddNetworkList: error getting ClusterInformation: Get https://[10.96.0.1]:443/apis/crd.projectcalico.org/v1/clusterinformations
 ```
+
+## unable to access pod via podip
+
+ipaddress of nodes might have changes via dhcp
