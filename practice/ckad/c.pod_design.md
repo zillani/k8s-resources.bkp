@@ -725,6 +725,6 @@ kubectl logs busybox-1529745840-m867r
 # Bear in mind that Kubernetes will run a new job/pod for each new cron job
 kubectl delete cj busybox
 ```
-
+![Please check this](https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/)
 </p>
 </details>
