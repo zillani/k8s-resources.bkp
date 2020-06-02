@@ -5,6 +5,7 @@
  4. [ipaddress of master got updated](#ipaddress-of-master-got-updated)
  5. [container stays in creating state](#container-stays-in-creating-state)
  6. [unable to access pod via podip](#unable-to-access-pod-via-podip)
+ 7. [renaming node](#renaming-node)
 
 ## Upgrade issue
 
@@ -46,3 +47,6 @@ FailedCreatePodSandBox 16h kubelet, controller-1 Failed create pod sandbox: rpc 
 ## unable to access pod via podip
 
 ipaddress of nodes might have changes via dhcp
+
+## renaming node
+[node rename](https://stackoverflow.com/questions/46006716/how-to-change-name-of-a-kubernetes-node)
